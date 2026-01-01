@@ -1,0 +1,12 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: light --default;
+}
+
+body {
+  background-color: #eaeced;
+}
+.webWidth {
+  max-width: 1600px;
+  margin: 0 auto;
+}
