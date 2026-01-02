@@ -35,7 +35,7 @@ const Services = () => {
     },
   ];
   return (
-    <section className="bg-[#0b3b40] py-16 px-4 rounded-xl">
+    <section className="bg-[#0b3b40] py-16 px-4 rounded-xl mb-5">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center text-white mb-12">
@@ -64,7 +64,7 @@ const Services = () => {
               </div>
 
               {/* Content */}
-              <h3 className="font-semibold text-lg mb-2">{service.title}</h3>
+              <h3 className="font-semibold text-lg mb-2 text-[#0b3b40]">{service.title}</h3>
               <p className="text-sm opacity-80 leading-relaxed">
                 {service.desc}
               </p>
