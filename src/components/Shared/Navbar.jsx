@@ -62,10 +62,10 @@ const Navbar = () => {
           </ul>
         </div>
         <div className="navbar-end">
-          <Link to={"/login"} className="btn mr-1">
+          <Link to={"/login"} className="btn hover:bg-lime-400 border-none mr-1">
             Sign In
           </Link>
-          <a className="btn">Be a rider</a>
+          <a className="btn hover:bg-lime-400 border-none">Be a rider</a>
           <BsArrowUpRightCircleFill className="text-2xl" />
         </div>
       </div>
