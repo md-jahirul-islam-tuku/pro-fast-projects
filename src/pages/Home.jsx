@@ -5,6 +5,7 @@ import HowItWorks from "../components/Home/HowItWorks";
 import TrustedBy from "../components/Home/TrustedBy";
 import Guarantee from "../components/Home/Guarantee";
 import Priority from "../components/Home/Priority";
+import TestimonialCarousel from "../components/Home/TestimonialCarousel";
 
 const Home = () => {
   return (
@@ -15,6 +16,7 @@ const Home = () => {
       <TrustedBy />
       <Guarantee />
       <Priority />
+      <TestimonialCarousel />
     </div>
   );
 };

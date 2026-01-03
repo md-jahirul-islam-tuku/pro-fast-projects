@@ -10,3 +10,36 @@ body {
   max-width: 1600px;
   margin: 0 auto;
 }
+
+.swiper-slide {
+  opacity: 0.2;
+  transform: scale(0.8) !important;
+  transition: all 0.4s ease;
+}
+
+.swiper-slide-active {
+  opacity: 1;
+  transform: scale(1) !important;
+}
+
+.custom-prev,
+.custom-next {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.custom-prev {
+  transform: translateX(-60px);
+}
+
+.custom-next {
+  transform: translateX(60px);
+}
