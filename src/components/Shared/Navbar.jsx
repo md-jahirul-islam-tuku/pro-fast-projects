@@ -1,6 +1,6 @@
 import React from "react";
 import { BsArrowUpRightCircleFill } from "react-icons/bs";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import Logo from "./Logo";
 
 const Navbar = () => {
@@ -62,7 +62,9 @@ const Navbar = () => {
           </ul>
         </div>
         <div className="navbar-end">
-          <a className="btn mr-1">Sign In</a>
+          <Link to={"/login"} className="btn mr-1">
+            Sign In
+          </Link>
           <a className="btn">Be a rider</a>
           <BsArrowUpRightCircleFill className="text-2xl" />
         </div>
