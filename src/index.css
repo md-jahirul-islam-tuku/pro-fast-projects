@@ -7,14 +7,14 @@ body {
   background-color: #eaeced;
 }
 .webWidth {
-  max-width: 1600px;
+  max-width: 1280px;
   margin: 0 auto;
 }
 
 .swiper-slide {
   opacity: 0.2;
   transform: scale(0.8) !important;
-  transition: all 0.4s ease;
+  transition: all 1s ease;
 }
 
 .swiper-slide-active {
@@ -37,9 +37,9 @@ body {
 }
 
 .custom-prev {
-  transform: translateX(-60px);
+  transform: translateX(-20px);
 }
 
 .custom-next {
-  transform: translateX(60px);
+  transform: translateX(20px);
 }

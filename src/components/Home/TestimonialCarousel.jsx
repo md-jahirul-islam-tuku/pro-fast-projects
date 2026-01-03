@@ -37,7 +37,7 @@ const testimonials = [
 
 export default function TestimonialCarousel() {
   return (
-    <div className="py-20 px-20">
+    <div className="py-20 px-20 flex flex-col justify-center">
       <div className="relative">
         <Swiper
           centeredSlides
@@ -53,6 +53,7 @@ export default function TestimonialCarousel() {
           autoplay={{
             delay: 2500,
             disableOnInteraction: false,
+            pauseOnMouseEnter: true,
           }}
           navigation={{
             prevEl: ".custom-prev",
@@ -84,12 +85,14 @@ export default function TestimonialCarousel() {
         </Swiper>
 
         {/* Custom arrows */}
-        <button className="custom-prev absolute left-185 -translate-x-16 bottom-0 w-10 h-10 rounded-full flex items-center justify-center">
-          <FiArrowLeft />
-        </button>
-        <button className="custom-next absolute left-165 translate-x-16 bottom-0 w-10 h-10 rounded-full flex items-center justify-center">
-          <FiArrowRight />
-        </button>
+        <div className="flex justify-center">
+          <button className="custom-prev absolute -translate-x-16 bottom-0 w-10 h-10 rounded-full flex items-center justify-center">
+            <FiArrowLeft />
+          </button>
+          <button className="custom-next absolute translate-x-16 bottom-0 w-10 h-10 rounded-full flex items-center justify-center">
+            <FiArrowRight />
+          </button>
+        </div>
       </div>
     </div>
   );
