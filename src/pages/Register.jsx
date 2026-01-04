@@ -1,23 +1,46 @@
 import React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useAuth } from "../authentication/AuthContext";
 
 const Register = () => {
-  const { registerUser, user } = useAuth();
-  console.log(user);
+  const [showPasswordRules, setShowPasswordRules] = React.useState(false);
+  const [showEmailRules, setShowEmailRules] = React.useState(false);
+  const { registerUser, signOutUser } = useAuth();
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm({
     mode: "onChange",
   });
+  const password = useWatch({
+    control,
+    name: "password",
+    defaultValue: "",
+  });
+  const emailValue = useWatch({
+    control,
+    name: "email",
+    defaultValue: "",
+  });
+
+  const rules = {
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number: /\d/.test(password),
+    special: /[@$!%*?&#]/.test(password),
+    length: password.length >= 8,
+  };
+
   const onSubmit = (data) => {
     registerUser(data.email, data.password)
-      .then((result) => console.log(result))
+      .then((result) => {
+        console.log(result);
+        signOutUser();
+      })
       .catch((error) => console.log(error.code || error.message));
-    console.log(data);
   };
   return (
     <div className="card w-full shrink-0">
@@ -42,14 +65,44 @@ const Register = () => {
             placeholder="Email"
             {...register("email", {
               required: "Email is required",
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Enter a valid email address !",
-              },
+              pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
             })}
+            onFocus={() => setShowEmailRules(true)}
+            onBlur={() => {
+              if (!emailValue) setShowEmailRules(false);
+            }}
           />
           {errors.email && (
             <span className="text-red-500">{errors.email.message}</span>
+          )}
+          {showEmailRules && (
+            <ul className="mt-2 space-y-1 text-sm">
+              <li
+                className={
+                  /^[^\s@]+/.test(emailValue)
+                    ? "text-green-500"
+                    : "text-red-500"
+                }
+              >
+                ✔ Must contain characters before @
+              </li>
+              <li
+                className={
+                  /@/.test(emailValue) ? "text-green-500" : "text-red-500"
+                }
+              >
+                ✔ Must contain @ symbol
+              </li>
+              <li
+                className={
+                  /\.[^\s@]+$/.test(emailValue)
+                    ? "text-green-500"
+                    : "text-red-500"
+                }
+              >
+                ✔ Must contain a domain like .com
+              </li>
+            </ul>
           )}
           <label className="label">Password</label>
           <input
@@ -58,24 +111,41 @@ const Register = () => {
             placeholder="Password"
             {...register("password", {
               required: "Password is required",
-              minLength: {
-                value: 8,
-                message: "Password must be at least 8 characters",
-              },
-              maxLength: {
-                value: 20,
-                message: "Maximum 20 characters",
-              },
-              pattern: {
-                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/,
-                message:
-                  "Must include uppercase, lowercase, number & special character",
-              },
             })}
+            onFocus={() => {
+              setShowPasswordRules(true);
+            }}
+            onBlur={() => {
+              setShowPasswordRules(false);
+            }}
           />
           {errors.password && (
             <span className="text-red-500">{errors.password.message}</span>
           )}
+          {showPasswordRules && (
+            <ul>
+              <li
+                className={rules.uppercase ? "text-green-500" : "text-red-500"}
+              >
+                ✔ Uppercase letter
+              </li>
+              <li
+                className={rules.lowercase ? "text-green-500" : "text-red-500"}
+              >
+                ✔ Lowercase letter
+              </li>
+              <li className={rules.number ? "text-green-500" : "text-red-500"}>
+                ✔ Number
+              </li>
+              <li className={rules.special ? "text-green-500" : "text-red-500"}>
+                ✔ Special character
+              </li>
+              <li className={rules.length ? "text-green-500" : "text-red-500"}>
+                ✔ At least 8 characters
+              </li>
+            </ul>
+          )}
+
           <button className="btn bg-lime-400 hover:bg-lime-500 hover:text-white mt-4 text-xl">
             Register
           </button>

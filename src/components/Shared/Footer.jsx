@@ -25,9 +25,9 @@ const Footer = () => {
   return (
     <footer className="footer footer-horizontal footer-center bg-black text-primary-content p-10 rounded-xl">
       <aside>
-        <NavLink>
+        <div>
           <Logo />
-        </NavLink>
+        </div>
         <p className="max-w-7/10">
           Enjoy fast, reliable parcel delivery with real-time tracking and zero
           hassle. From personal packages to business shipments — we deliver on
