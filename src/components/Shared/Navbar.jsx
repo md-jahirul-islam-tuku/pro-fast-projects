@@ -2,8 +2,10 @@ import React from "react";
 import { BsArrowUpRightCircleFill } from "react-icons/bs";
 import { Link, NavLink } from "react-router-dom";
 import Logo from "./Logo";
+import { useAuth } from "../../authentication/AuthContext";
 
 const Navbar = () => {
+  const { user, signOutUser } = useAuth();
   const Links = (
     <>
       <li>
@@ -62,9 +64,21 @@ const Navbar = () => {
           </ul>
         </div>
         <div className="navbar-end">
-          <Link to={"/login"} className="btn hover:bg-lime-400 border-none mr-1">
-            Sign In
-          </Link>
+          {!user ? (
+            <Link
+              to={"/login"}
+              className="btn hover:bg-lime-400 border-none mr-1"
+            >
+              Sign In
+            </Link>
+          ) : (
+            <Button
+              onClick={() => signOutUser()}
+              className="btn hover:bg-lime-400 border-none mr-1"
+            >
+              Sign Out
+            </Button>
+          )}
           <a className="btn hover:bg-lime-400 border-none">Be a rider</a>
           <BsArrowUpRightCircleFill className="text-2xl" />
         </div>
