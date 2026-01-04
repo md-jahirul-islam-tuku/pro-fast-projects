@@ -6,9 +6,12 @@ import { RouterProvider } from "react-router-dom";
 import router from "./router/router.jsx";
 import "swiper/css";
 import "swiper/css/pagination";
+import AuthProvider from "./authentication/AuthProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>
 );

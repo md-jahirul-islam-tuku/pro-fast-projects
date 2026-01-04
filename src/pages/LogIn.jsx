@@ -49,6 +49,10 @@ const LogIn = () => {
                 value: 8,
                 message: "Password must be at least 8 characters",
               },
+              maxLength: {
+                value: 20,
+                message: "Maximum 20 characters",
+              },
               pattern: {
                 value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/,
                 message:

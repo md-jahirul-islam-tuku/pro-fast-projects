@@ -1,23 +1,81 @@
 import React from "react";
+import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { useAuth } from "../authentication/AuthContext";
 
 const Register = () => {
+  const { registerUser, user } = useAuth();
+  console.log(user);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: "onChange",
+  });
+  const onSubmit = (data) => {
+    registerUser(data.email, data.password)
+      .then((result) => console.log(result))
+      .catch((error) => console.log(error.code || error.message));
+    console.log(data);
+  };
   return (
     <div className="card w-full shrink-0">
       <div className="card-body">
         <h1 className="text-4xl font-bold">Create an Account</h1>
         <p className="font-semibold">Register with ProFast</p>
-        <form className="fieldset text-lg font-semibold">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="fieldset text-lg font-semibold"
+        >
           <label className="label">Name</label>
-          <input type="text" className="input w-full" placeholder="Name" disabled/>
+          <input
+            type="text"
+            className="input w-full"
+            placeholder="Name"
+            disabled
+          />
           <label className="label">Email</label>
-          <input type="email" className="input w-full" placeholder="Email" />
+          <input
+            type="email"
+            className="input w-full"
+            placeholder="Email"
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Enter a valid email address !",
+              },
+            })}
+          />
+          {errors.email && (
+            <span className="text-red-500">{errors.email.message}</span>
+          )}
           <label className="label">Password</label>
           <input
             type="password"
             className="input w-full"
             placeholder="Password"
+            {...register("password", {
+              required: "Password is required",
+              minLength: {
+                value: 8,
+                message: "Password must be at least 8 characters",
+              },
+              maxLength: {
+                value: 20,
+                message: "Maximum 20 characters",
+              },
+              pattern: {
+                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/,
+                message:
+                  "Must include uppercase, lowercase, number & special character",
+              },
+            })}
           />
+          {errors.password && (
+            <span className="text-red-500">{errors.password.message}</span>
+          )}
           <button className="btn bg-lime-400 hover:bg-lime-500 hover:text-white mt-4 text-xl">
             Register
           </button>
