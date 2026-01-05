@@ -64,20 +64,20 @@ const Navbar = () => {
           </ul>
         </div>
         <div className="navbar-end">
-          {!user ? (
+          {user ? (
+            <Link
+              onClick={()=>signOutUser()}
+              className="btn hover:bg-lime-400 border-none mr-1"
+            >
+              Sign Out
+            </Link>
+          ) : (
             <Link
               to={"/login"}
               className="btn hover:bg-lime-400 border-none mr-1"
             >
               Sign In
             </Link>
-          ) : (
-            <Button
-              onClick={() => signOutUser()}
-              className="btn hover:bg-lime-400 border-none mr-1"
-            >
-              Sign Out
-            </Button>
           )}
           <a className="btn hover:bg-lime-400 border-none">Be a rider</a>
           <BsArrowUpRightCircleFill className="text-2xl" />

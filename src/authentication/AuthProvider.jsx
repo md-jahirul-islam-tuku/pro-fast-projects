@@ -4,6 +4,7 @@ import { auth } from "../../firebase.init";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
 
@@ -19,15 +20,22 @@ const AuthProvider = ({ children }) => {
   }, []);
   // create user
   const registerUser = (email, password) => {
+    setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
   };
+
+  // sign in
+  const signInUser = (email, password) => {
+    setLoading(true);
+    return signInWithEmailAndPassword(auth, email, password);
+  };
+
   // sign out
   const signOutUser = () => {
-    return signOut(auth)
-      .then(() => {})
-      .catch((err) => console.log(err.code || err.message));
+    setLoading(true);
+    return signOut(auth);
   };
-  const authInfo = { registerUser, user, loading, signOutUser };
+  const authInfo = { registerUser, user, loading, signOutUser, signInUser };
   return (
     <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
   );
