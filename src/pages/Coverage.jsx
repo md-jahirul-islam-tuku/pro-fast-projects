@@ -19,7 +19,7 @@ const FlyToDistrict = ({ district }) => {
 
   useEffect(() => {
     if (!district) return;
-    map.flyTo([district.latitude, district.longitude], 11, {
+    map.flyTo([district.latitude, district.longitude], 14, {
       duration: 1.4,
     });
   }, [district, map]);
