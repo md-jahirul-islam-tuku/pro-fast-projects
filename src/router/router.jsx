@@ -6,6 +6,8 @@ import AuthLayout from "../layouts/AuthLayout";
 import LogIn from "../pages/LogIn";
 import Register from "../pages/Register";
 import BangladeshCoverage from "../pages/Coverage";
+import AddParcel from "../pages/AddParcel";
+import AboutUs from "../pages/AboutUs";
 
 const router = createBrowserRouter([
   {
@@ -14,7 +16,9 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, Component: Home },
-      {path:'coverage',Component: BangladeshCoverage}
+      { path: "coverage", Component: BangladeshCoverage },
+      { path: "pricing", Component: AddParcel },
+      { path: "about", Component: AboutUs },
     ],
   },
   {
