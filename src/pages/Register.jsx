@@ -10,7 +10,8 @@ const Register = () => {
   const [showEmailRules, setShowEmailRules] = useState(false);
   const [passwordShow, setPasswordShow] = useState(false);
 
-  const { registerUser } = useAuth();
+  const { registerUser, user } = useAuth();
+  console.log(user);
 
   const {
     register,
@@ -33,18 +34,18 @@ const Register = () => {
     emailChecks.hasTextBeforeAt && emailChecks.hasAt && emailChecks.hasDomain;
 
   // Password rules
-  const passwordRules = {
+  const rules = {
     uppercase: /[A-Z]/.test(password),
     lowercase: /[a-z]/.test(password),
     number: /\d/.test(password),
     special: /[@$!%*?&#]/.test(password),
     length: password.length >= 8,
   };
-  const isPasswordValid = Object.values(passwordRules).every(Boolean);
+  const isPasswordValid = Object.values(rules).every(Boolean);
 
   // Submit
   const onSubmit = (data) => {
-    registerUser(data.email, data.password)
+    registerUser(data.email, data.password, data.displayName)
       .then(() => {
         Swal.fire({
           position: "top",
@@ -73,74 +74,77 @@ const Register = () => {
   };
 
   return (
-    <div className="card w-full shrink-0">
-      <div className="card-body">
+    <div className="card w-full shrink-0 max-w-md mx-auto mt-10 shadow-lg">
+      <div className="card-body p-6">
         <h1 className="text-4xl font-bold">Create an Account</h1>
-        <p className="font-semibold">Register with ProFast</p>
+        <p className="font-semibold mb-4">Register with ProFast</p>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="fieldset text-lg font-semibold"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Name */}
-          <label className="label">Name</label>
-          <input
-            type="text"
-            className="input w-full"
-            placeholder="Name"
-            disabled
-          />
+          <div>
+            <label className="label">Name</label>
+            <input
+              type="text"
+              className="input w-full"
+              placeholder="Full Name"
+              {...register("displayName", { required: "Name is required" })}
+            />
+            {errors.displayName && (
+              <span className="text-red-500">{errors.displayName.message}</span>
+            )}
+          </div>
 
           {/* Email */}
-          <label className="label">Email</label>
-          <input
-            type="email"
-            className="input w-full"
-            placeholder="Email"
-            {...register("email", {
-              required: "Email is required",
-              pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            })}
-            onFocus={() => {
-              if (!isEmailValid) setShowEmailRules(true);
-            }}
-            onBlur={(e) => {
-              if (!e.relatedTarget || e.relatedTarget.type !== "submit") {
-                setShowEmailRules(false);
-              }
-            }}
-          />
-          {errors.email && (
-            <span className="text-red-500">{errors.email.message}</span>
-          )}
-
-          {showEmailRules && !isEmailValid && (
-            <ul className="mt-2 space-y-1 text-sm">
-              <li
-                className={
-                  emailChecks.hasTextBeforeAt
-                    ? "text-green-500"
-                    : "text-red-500"
+          <div>
+            <label className="label">Email</label>
+            <input
+              type="email"
+              className="input w-full"
+              placeholder="Email"
+              {...register("email", {
+                required: "Email is required",
+                pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              })}
+              onFocus={() => {
+                if (!isEmailValid) setShowEmailRules(true);
+              }}
+              onBlur={(e) => {
+                if (!e.relatedTarget || e.relatedTarget.type !== "submit") {
+                  setShowEmailRules(false);
                 }
-              >
-                ✔ Characters before @
-              </li>
-              <li
-                className={
-                  emailChecks.hasAt ? "text-green-500" : "text-red-500"
-                }
-              >
-                ✔ Contains @ symbol
-              </li>
-              <li
-                className={
-                  emailChecks.hasDomain ? "text-green-500" : "text-red-500"
-                }
-              >
-                ✔ Valid domain (.com, .net, etc.)
-              </li>
-            </ul>
-          )}
+              }}
+            />
+            {errors.email && (
+              <span className="text-red-500">{errors.email.message}</span>
+            )}
+            {showEmailRules && !isEmailValid && (
+              <ul className="mt-2 space-y-1 text-sm">
+                <li
+                  className={
+                    emailChecks.hasTextBeforeAt
+                      ? "text-green-500"
+                      : "text-red-500"
+                  }
+                >
+                  ✔ Characters before @
+                </li>
+                <li
+                  className={
+                    emailChecks.hasAt ? "text-green-500" : "text-red-500"
+                  }
+                >
+                  ✔ Contains @ symbol
+                </li>
+                <li
+                  className={
+                    emailChecks.hasDomain ? "text-green-500" : "text-red-500"
+                  }
+                >
+                  ✔ Valid domain (.com, .net, etc.)
+                </li>
+              </ul>
+            )}
+          </div>
 
           {/* Password */}
           <label className="label">Password</label>
@@ -152,58 +156,47 @@ const Register = () => {
               {...register("password", { required: "Password is required" })}
               onFocus={() => setShowPasswordRules(true)}
               onBlur={(e) => {
-                if (!e.relatedTarget || e.relatedTarget.type !== "submit") {
+                // Only hide rules if the new focus is NOT the eye icon
+                if (
+                  !e.relatedTarget ||
+                  !e.relatedTarget.classList.contains("toggle-password")
+                ) {
                   setShowPasswordRules(false);
                 }
-                setPasswordShow(false);
               }}
             />
-            <span
+            <button
+              type="button"
               onClick={() => setPasswordShow(!passwordShow)}
-              className="absolute top-3 right-3 text-lg cursor-pointer z-10"
+              className="absolute top-3 right-3 text-lg cursor-pointer z-10 toggle-password"
             >
               {passwordShow ? <PiEyeClosedBold /> : <PiEyeBold />}
-            </span>
+            </button>
           </div>
           {errors.password && (
             <span className="text-red-500">{errors.password.message}</span>
           )}
 
+          {/* Password validation rules */}
           {showPasswordRules && !isPasswordValid && (
             <ul className="mt-2 space-y-1 text-sm">
               <li
-                className={
-                  passwordRules.uppercase ? "text-green-500" : "text-red-500"
-                }
+                className={rules.uppercase ? "text-green-500" : "text-red-500"}
               >
                 ✔ Uppercase letter
               </li>
               <li
-                className={
-                  passwordRules.lowercase ? "text-green-500" : "text-red-500"
-                }
+                className={rules.lowercase ? "text-green-500" : "text-red-500"}
               >
                 ✔ Lowercase letter
               </li>
-              <li
-                className={
-                  passwordRules.number ? "text-green-500" : "text-red-500"
-                }
-              >
+              <li className={rules.number ? "text-green-500" : "text-red-500"}>
                 ✔ Number
               </li>
-              <li
-                className={
-                  passwordRules.special ? "text-green-500" : "text-red-500"
-                }
-              >
+              <li className={rules.special ? "text-green-500" : "text-red-500"}>
                 ✔ Special character
               </li>
-              <li
-                className={
-                  passwordRules.length ? "text-green-500" : "text-red-500"
-                }
-              >
+              <li className={rules.length ? "text-green-500" : "text-red-500"}>
                 ✔ At least 8 characters
               </li>
             </ul>
@@ -213,7 +206,7 @@ const Register = () => {
           <button
             type="submit"
             disabled={!isEmailValid || !isPasswordValid}
-            className="btn bg-lime-400 hover:bg-lime-500 hover:text-white mt-4 text-xl"
+            className="btn bg-lime-400 hover:bg-lime-500 hover:text-white mt-4 w-full text-xl"
           >
             Register
           </button>
@@ -228,7 +221,8 @@ const Register = () => {
 
         <div className="divider">OR</div>
 
-        <button className="btn bg-white text-black border-[#e5e5e5]">
+        <button className="btn bg-white text-black border-[#e5e5e5] w-full flex items-center justify-center space-x-2">
+          {/* Google Icon */}
           <svg
             aria-label="Google logo"
             width="16"

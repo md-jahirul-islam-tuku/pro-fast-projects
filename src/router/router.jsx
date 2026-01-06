@@ -8,6 +8,8 @@ import Register from "../pages/Register";
 import BangladeshCoverage from "../pages/Coverage";
 import AddParcel from "../pages/AddParcel";
 import AboutUs from "../pages/AboutUs";
+import PrivateRoute from "../routes/PriveateRoute";
+import Dashboard from "../pages/Dashboard";
 
 const router = createBrowserRouter([
   {
@@ -17,7 +19,22 @@ const router = createBrowserRouter([
     children: [
       { index: true, Component: Home },
       { path: "coverage", Component: BangladeshCoverage },
-      { path: "pricing", Component: AddParcel },
+      {
+        path: "pricing",
+        element: (
+          <PrivateRoute>
+            <AddParcel />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "dashboard",
+        element: (
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        ),
+      },
       { path: "about", Component: AboutUs },
     ],
   },

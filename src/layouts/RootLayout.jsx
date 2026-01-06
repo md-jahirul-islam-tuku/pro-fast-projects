@@ -7,7 +7,7 @@ const RootLayout = () => {
   return (
     <div className="webWidth">
       <Navbar />
-      <Outlet />
+      <div className="min-h-screen"><Outlet /></div>
       <Footer />
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../authentication/AuthContext";
 import Swal from "sweetalert2";
 import { PiEyeBold, PiEyeClosedBold } from "react-icons/pi";
@@ -11,6 +11,11 @@ const LogIn = () => {
   const [passwordShow, setPasswordShow] = useState(false);
 
   const { signInUser } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // The page the user wanted to visit before login
+  const from = location.state?.from?.pathname || "/";
 
   const {
     register,
@@ -55,10 +60,7 @@ const LogIn = () => {
           showConfirmButton: false,
           timer: 1500,
         }).then(() => {
-          reset();
-          setPasswordShow(false);
-          setShowEmailRules(false);
-          setShowPasswordRules(false);
+          navigate(from, { replace: true });
         });
       })
       .catch((error) => {
@@ -109,7 +111,6 @@ const LogIn = () => {
           {errors.email && (
             <span className="text-red-500">{errors.email.message}</span>
           )}
-
           {/* Show email rules only when focused or invalid */}
           {showEmailRules && !isEmailValid && (
             <ul className="mt-2 space-y-1 text-sm">
@@ -138,7 +139,6 @@ const LogIn = () => {
               </li>
             </ul>
           )}
-
           {/* Password */}
           <label className="label">Password</label>
           <div className="relative">
@@ -149,24 +149,28 @@ const LogIn = () => {
               {...register("password", { required: "Password is required" })}
               onFocus={() => setShowPasswordRules(true)}
               onBlur={(e) => {
-                if (!e.relatedTarget || e.relatedTarget.type !== "submit") {
+                // Only hide rules if the new focus is NOT the eye icon
+                if (
+                  !e.relatedTarget ||
+                  !e.relatedTarget.classList.contains("toggle-password")
+                ) {
                   setShowPasswordRules(false);
                 }
-                setPasswordShow(false);
               }}
             />
-            <span
+            <button
+              type="button"
               onClick={() => setPasswordShow(!passwordShow)}
-              className="absolute top-3 right-3 text-lg cursor-pointer z-10"
+              className="absolute top-3 right-3 text-lg cursor-pointer z-10 toggle-password"
             >
               {passwordShow ? <PiEyeClosedBold /> : <PiEyeBold />}
-            </span>
+            </button>
           </div>
           {errors.password && (
             <span className="text-red-500">{errors.password.message}</span>
           )}
 
-          {/* Show password rules only when focused or invalid */}
+          {/* Password validation rules */}
           {showPasswordRules && !isPasswordValid && (
             <ul className="mt-2 space-y-1 text-sm">
               <li
@@ -190,11 +194,9 @@ const LogIn = () => {
               </li>
             </ul>
           )}
-
           <div>
             <a className="link link-hover underline">Forgot password?</a>
           </div>
-
           <button
             type="submit"
             className="btn bg-lime-400 hover:bg-lime-500 hover:text-white mt-4 text-xl"

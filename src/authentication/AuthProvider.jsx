@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  updateProfile,
 } from "firebase/auth";
 
 const AuthProvider = ({ children }) => {
@@ -19,9 +20,26 @@ const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
   // create user
-  const registerUser = (email, password) => {
+  const registerUser = async (email, password, displayName, photoURL) => {
     setLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      // Update profile immediately
+      await updateProfile(userCredential.user, {
+        displayName,
+        photoURL: photoURL || "",
+      });
+
+      setUser({ ...userCredential.user, displayName, photoURL });
+      return userCredential.user;
+    } finally {
+      setLoading(false);
+    }
   };
 
   // sign in

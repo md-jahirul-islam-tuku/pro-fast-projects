@@ -23,6 +23,11 @@ const Navbar = () => {
       <li>
         <NavLink to={"/be-rider"}>Be a Rider</NavLink>
       </li>
+      {user && (
+        <li>
+          <NavLink to={"/dashboard"}>Dashboard</NavLink>
+        </li>
+      )}
     </>
   );
   return (
@@ -66,7 +71,7 @@ const Navbar = () => {
         <div className="navbar-end">
           {user ? (
             <Link
-              onClick={()=>signOutUser()}
+              onClick={() => signOutUser()}
               className="btn hover:bg-lime-400 border-none mr-1"
             >
               Sign Out

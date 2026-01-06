@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import { calculateCost } from "../utils/calculateCost";
+import { api } from "../utils/Api";
+import { useAuth } from "../authentication/AuthContext";
+
+const MySwal = withReactContent(Swal);
 
 const regions = ["Dhaka", "Barishal", "Chattogram", "Rajshahi", "Khulna"];
 const serviceCenters = ["Uttara", "Mirpur", "Dhanmondi", "Agrabad"];
 
-const AddParcel = ({ user }) => {
+const AddParcel = () => {
   const [parcelType, setParcelType] = useState("document");
+  const { user } = useAuth();
 
   const {
     register,
@@ -17,10 +21,12 @@ const AddParcel = ({ user }) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      senderName: user?.name || "",
+      senderName: user?.displayName || "",
+      senderEmail: user?.email || "",
     },
   });
 
+  // Show confirmation modal before booking
   const onSubmit = (data) => {
     const cost = calculateCost({
       type: parcelType,
@@ -29,41 +35,76 @@ const AddParcel = ({ user }) => {
       receiverCenter: data.receiverCenter,
     });
 
-    toast.info(
-      <div>
-        <p className="font-semibold">Delivery Cost: ৳{cost}</p>
-        <button
-          onClick={() => confirmBooking(data, cost)}
-          className="mt-2 bg-lime-500 text-white px-4 py-1 rounded"
-        >
-          Confirm
-        </button>
-      </div>,
-      { autoClose: false }
-    );
+    MySwal.fire({
+      title: "Confirm Parcel Booking",
+      html: (
+        <div className="text-left space-y-2">
+          <h3 className="font-semibold">Parcel Info:</h3>
+          <p>Type: {parcelType}</p>
+          <p>Title: {data.title}</p>
+          {parcelType === "non-document" && <p>Weight: {data.weight} KG</p>}
+          <p>Cost: ৳{cost}</p>
+
+          <h3 className="font-semibold mt-3">Sender Details:</h3>
+          <p>Name: {data.senderName}</p>
+          <p>Address: {data.senderContact}</p>
+          <p>Phone: {data.phoneNumber}</p>
+          <p>Email: {user?.email}</p>
+          <p>District: {data.senderRegion}</p>
+          <p>Service Center: {data.senderCenter}</p>
+          <p>Pickup Instruction: {data.pickupInstruction}</p>
+
+          <h3 className="font-semibold mt-3">Receiver Details:</h3>
+          <p>Name: {data.receiverName}</p>
+          <p>Address: {data.receiverContact}</p>
+          <p>Phone: {data.receiverAddress}</p>
+          <p>District: {data.receiverRegion}</p>
+          <p>Service Center: {data.receiverCenter}</p>
+          <p>Delivery Instruction: {data.deliveryInstruction}</p>
+        </div>
+      ),
+      showCancelButton: true,
+      confirmButtonText: "Confirm",
+      cancelButtonText: "Cancel",
+      width: 600,
+      customClass: {
+        htmlContainer: "text-left",
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        confirmBooking(data, cost);
+      }
+    });
   };
 
+  // Send data to backend
   const confirmBooking = async (data, cost) => {
-    console.log(data, cost);
-    // try {
-    //   await axios.post("/api/parcels", {
-    //     ...data,
-    //     type: parcelType,
-    //     cost,
-    //     creation_date: new Date(),
-    //   });
+    try {
+      await api.post("/parcels", {
+        ...data,
+        parcelType,
+        cost,
+        status: "pending",
+        createdAt: new Date(),
+      });
 
-    //   toast.dismiss();
-    //   toast.success("Parcel booked successfully!");
-    // } catch (err) {
-    //   console.log(err);
-    //   toast.error("Failed to save parcel");
-    // }
+      MySwal.fire({
+        icon: "success",
+        title: "Parcel booked successfully ✅",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (err) {
+      MySwal.fire({
+        icon: "error",
+        title: "Failed to save parcel ❌",
+        text: err.message || "Something went wrong",
+      });
+    }
   };
 
   return (
     <div className="bg-white rounded-2xl p-8 shadow my-5">
-      <ToastContainer />
       <h2 className="text-2xl font-bold mb-10">Add Parcel</h2>
       <p className="text-gray-500 text-xl font-semibold mb-3">
         Enter your parcel details
@@ -99,6 +140,9 @@ const AddParcel = ({ user }) => {
                 className="input w-full"
                 placeholder="Parcel Name"
               />
+              {errors.title && (
+                <span className="text-red-500">Parcel Name is required</span>
+              )}
             </div>
 
             {parcelType === "non-document" && (
@@ -108,16 +152,19 @@ const AddParcel = ({ user }) => {
                 </label>
                 <input
                   type="number"
-                  {...register("weight")}
+                  {...register("weight", { required: true })}
                   className="input w-full"
                   placeholder="Parcel Weight (KG)"
                 />
+                {errors.weight && (
+                  <span className="text-red-500">Weight is required</span>
+                )}
               </div>
             )}
           </div>
         </section>
 
-        {/* Sender & Receiver Info side by side */}
+        {/* Sender & Receiver Info */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Sender Info */}
           <div>
@@ -128,10 +175,8 @@ const AddParcel = ({ user }) => {
                 <input
                   {...register("senderName", { required: true })}
                   className="input w-full"
-                  placeholder="Sender Name"
                 />
               </div>
-
               <div>
                 <label className="block mb-1 font-semibold">Address</label>
                 <input
@@ -140,22 +185,16 @@ const AddParcel = ({ user }) => {
                   placeholder="Address"
                 />
               </div>
-
               <div>
-                <label className="block mb-1 font-semibold">
-                  Sender Phone Number
-                </label>
+                <label className="block mb-1 font-semibold">Phone Number</label>
                 <input
                   {...register("phoneNumber", { required: true })}
                   className="input w-full"
                   placeholder="Phone Number"
                 />
               </div>
-
               <div>
-                <label className="block mb-1 font-semibold">
-                  Sender District
-                </label>
+                <label className="block mb-1 font-semibold">District</label>
                 <select
                   {...register("senderRegion", { required: true })}
                   className="input w-full"
@@ -166,7 +205,6 @@ const AddParcel = ({ user }) => {
                   ))}
                 </select>
               </div>
-
               <div>
                 <label className="block mb-1 font-semibold">
                   Service Center
@@ -181,7 +219,6 @@ const AddParcel = ({ user }) => {
                   ))}
                 </select>
               </div>
-
               <div>
                 <label className="block mb-1 font-semibold">
                   Pickup Instruction
@@ -209,7 +246,6 @@ const AddParcel = ({ user }) => {
                   placeholder="Receiver Name"
                 />
               </div>
-
               <div>
                 <label className="block mb-1 font-semibold">Address</label>
                 <input
@@ -218,33 +254,26 @@ const AddParcel = ({ user }) => {
                   placeholder="Address"
                 />
               </div>
-
               <div>
-                <label className="block mb-1 font-semibold">
-                  Receiver Phone Number
-                </label>
+                <label className="block mb-1 font-semibold">Phone Number</label>
                 <input
                   {...register("receiverAddress", { required: true })}
                   className="input w-full"
                   placeholder="Phone Number"
                 />
               </div>
-
               <div>
-                <label className="block mb-1 font-semibold">
-                  Receiver District
-                </label>
+                <label className="block mb-1 font-semibold">District</label>
                 <select
                   {...register("receiverRegion", { required: true })}
                   className="input w-full"
                 >
-                  <option value="">Select Region</option>
+                  <option value="">Select District</option>
                   {regions.map((r) => (
                     <option key={r}>{r}</option>
                   ))}
                 </select>
               </div>
-
               <div>
                 <label className="block mb-1 font-semibold">
                   Service Center
@@ -259,7 +288,6 @@ const AddParcel = ({ user }) => {
                   ))}
                 </select>
               </div>
-
               <div>
                 <label className="block mb-1 font-semibold">
                   Delivery Instruction
@@ -274,7 +302,10 @@ const AddParcel = ({ user }) => {
           </div>
         </section>
 
-        <button className="bg-lime-500 text-white font-semibold px-6 py-2 rounded hover:bg-lime-600 transition">
+        <button
+          type="submit"
+          className="bg-lime-500 text-black cursor-pointer hover:text-white font-semibold px-6 py-2 rounded hover:bg-lime-600 transition"
+        >
           Proceed to Confirm Booking
         </button>
       </form>
