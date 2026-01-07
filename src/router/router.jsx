@@ -13,6 +13,7 @@ import Dashboard from "../pages/Dashboard";
 import MyParcels from "../components/Dashboard/MyParcels";
 import MyProfile from "../components/Dashboard/MyProfile";
 import Settings from "../components/Dashboard/Settings";
+import BeARider from "../pages/BeARider";
 
 const router = createBrowserRouter([
   {
@@ -22,8 +23,9 @@ const router = createBrowserRouter([
     children: [
       { index: true, Component: Home },
       { path: "coverage", Component: BangladeshCoverage },
+      { path: "be-rider", Component: BeARider },
       {
-        path: "pricing",
+        path: "sendParcel",
         element: (
           <PrivateRoute>
             <AddParcel />
