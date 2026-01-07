@@ -10,6 +10,9 @@ import AddParcel from "../pages/AddParcel";
 import AboutUs from "../pages/AboutUs";
 import PrivateRoute from "../routes/PriveateRoute";
 import Dashboard from "../pages/Dashboard";
+import MyParcels from "../components/Dashboard/MyParcels";
+import MyProfile from "../components/Dashboard/MyProfile";
+import Settings from "../components/Dashboard/Settings";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +37,15 @@ const router = createBrowserRouter([
             <Dashboard />
           </PrivateRoute>
         ),
+        children: [
+          { index: true, Component: MyParcels },
+          {
+            path: "parcels",
+            Component: MyParcels,
+          },
+          { path: "profile", Component: MyProfile },
+          { path: "settings", Component: Settings },
+        ],
       },
       { path: "about", Component: AboutUs },
     ],
