@@ -4,6 +4,8 @@ import { api } from "../../utils/Api";
 import { useAuth } from "../../authentication/AuthContext";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
+import { FaCcAmazonPay } from "react-icons/fa";
 
 const MyParcels = () => {
   const { user } = useAuth();
@@ -101,7 +103,21 @@ const MyParcels = () => {
                   <td className="capitalize">{parcel.status}</td>
                   <td>৳{parcel.cost}</td>
                   <td>{new Date(parcel.createdAt).toLocaleDateString()}</td>
-                  <td>
+                  <td className="flex items-center">
+                    <Link to={`payment/${parcel._id}`}>
+                      <FaCcAmazonPay
+                        className={`text-lg ${
+                          parcel.status === "delivered"
+                            ? "text-gray-300"
+                            : "text-lime-500 text-xl"
+                        }`}
+                        title={
+                          parcel.status === "delivered"
+                            ? "Already delivered!"
+                            : "Payment"
+                        }
+                      />
+                    </Link>
                     <button
                       disabled={parcel.status === "delivered"}
                       onClick={() => handleDelete(parcel._id, parcel.status)}
@@ -113,7 +129,7 @@ const MyParcels = () => {
                       title={
                         parcel.status === "delivered"
                           ? "Delivered parcels cannot be deleted"
-                          : "Delete parcel?"
+                          : "Delete parcel"
                       }
                     >
                       <RiDeleteBin5Fill

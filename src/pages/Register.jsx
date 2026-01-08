@@ -4,14 +4,15 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../authentication/AuthContext";
 import Swal from "sweetalert2";
 import { PiEyeBold, PiEyeClosedBold } from "react-icons/pi";
+import Loader from "../components/Shared/Loader";
 
 const Register = () => {
   const [showPasswordRules, setShowPasswordRules] = useState(false);
   const [showEmailRules, setShowEmailRules] = useState(false);
   const [passwordShow, setPasswordShow] = useState(false);
 
-  const { registerUser, user } = useAuth();
-  console.log(user);
+  const { registerUser } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -45,6 +46,7 @@ const Register = () => {
 
   // Submit
   const onSubmit = (data) => {
+    setLoading(true);
     registerUser(data.email, data.password, data.displayName)
       .then(() => {
         Swal.fire({
@@ -58,6 +60,7 @@ const Register = () => {
           setPasswordShow(false);
           setShowEmailRules(false);
           setShowPasswordRules(false);
+          setLoading(false);
         });
       })
       .catch((error) => {
@@ -208,7 +211,7 @@ const Register = () => {
             disabled={!isEmailValid || !isPasswordValid}
             className="btn bg-lime-400 hover:bg-lime-500 hover:text-white mt-4 w-full text-xl"
           >
-            Register
+            {loading ? <Loader /> : "Register"}
           </button>
         </form>
 

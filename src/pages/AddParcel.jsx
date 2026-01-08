@@ -5,6 +5,7 @@ import withReactContent from "sweetalert2-react-content";
 import { calculateCost } from "../utils/calculateCost";
 import { api } from "../utils/Api";
 import { useAuth } from "../authentication/AuthContext";
+import Loader from "../components/Shared/Loader";
 
 const MySwal = withReactContent(Swal);
 
@@ -14,6 +15,7 @@ const serviceCenters = ["Uttara", "Mirpur", "Dhanmondi", "Agrabad"];
 const AddParcel = () => {
   const [parcelType, setParcelType] = useState("document");
   const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -28,6 +30,7 @@ const AddParcel = () => {
 
   // Show confirmation modal before booking
   const onSubmit = (data) => {
+    setLoading(true);
     const cost = calculateCost({
       type: parcelType,
       weight: data.weight,
@@ -71,8 +74,12 @@ const AddParcel = () => {
         htmlContainer: "text-left",
       },
     }).then((result) => {
+      console.log(result)
       if (result.isConfirmed) {
         confirmBooking(data, cost);
+      }
+      if (result.isDismissed) {
+        setLoading(false);
       }
     });
   };
@@ -93,7 +100,7 @@ const AddParcel = () => {
         title: "Parcel booked successfully ✅",
         timer: 1500,
         showConfirmButton: false,
-      });
+      }).then(setLoading(false));
     } catch (err) {
       MySwal.fire({
         icon: "error",
@@ -304,9 +311,9 @@ const AddParcel = () => {
 
         <button
           type="submit"
-          className="bg-lime-500 text-black cursor-pointer hover:text-white font-semibold px-6 py-2 rounded hover:bg-lime-600 transition"
+          className={`bg-lime-500 text-black cursor-pointer hover:text-white font-semibold px-6 py-2 rounded hover:bg-lime-600 transition ${loading && 'w-66'}`}
         >
-          Proceed to Confirm Booking
+          {loading ? <Loader /> : "Proceed to Confirm Booking"}
         </button>
       </form>
     </div>

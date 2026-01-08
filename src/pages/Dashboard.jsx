@@ -42,7 +42,7 @@ const Dashboard = () => {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <ul className="menu bg-base-200 min-h-full w-80 p-4 rounded-l-xl">
+        <ul className="menu bg-base-200 min-h-full w-56 p-4 rounded-l-xl text-lg font-semibold">
           <li>
             <NavLink
               to="parcels"

@@ -14,6 +14,7 @@ import MyParcels from "../components/Dashboard/MyParcels";
 import MyProfile from "../components/Dashboard/MyProfile";
 import Settings from "../components/Dashboard/Settings";
 import BeARider from "../pages/BeARider";
+import CheckoutForm from "../components/Dashboard/CheckoutForm";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,7 @@ const router = createBrowserRouter([
           },
           { path: "profile", Component: MyProfile },
           { path: "settings", Component: Settings },
+          { path: "payment/:id", Component: CheckoutForm },
         ],
       },
       { path: "about", Component: AboutUs },
