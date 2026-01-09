@@ -90,8 +90,9 @@ const MyParcels = () => {
                 <th>Type</th>
                 <th>Status</th>
                 <th>Cost</th>
+                <th>Payment</th>
                 <th>Created</th>
-                <th>Action</th>
+                <th>Pay/Del</th>
               </tr>
             </thead>
 
@@ -100,41 +101,56 @@ const MyParcels = () => {
                 <tr key={parcel._id}>
                   <td>{parcel.title}</td>
                   <td>{parcel.parcelType}</td>
-                  <td className="capitalize">{parcel.status}</td>
+                  <td
+                    className={`capitalize ${
+                      parcel.payment_status === "delivered"
+                        ? "text-lime-600"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {parcel.payment_status}
+                  </td>
                   <td>৳{parcel.cost}</td>
+                  <td  className={`${
+                      parcel.payment_status === "delivered"
+                        ? "text-lime-600"
+                        : "text-red-500"
+                    }`}>{`${
+                    parcel.payment_status === "delivered" ? "PAID" : "UNPAID"
+                  }`}</td>
                   <td>{new Date(parcel.createdAt).toLocaleDateString()}</td>
                   <td className="flex items-center">
-                    <Link to={`payment/${parcel._id}`}>
-                      <FaCcAmazonPay
-                        className={`text-lg ${
-                          parcel.status === "delivered"
-                            ? "text-gray-300"
-                            : "text-lime-500 text-xl"
-                        }`}
-                        title={
-                          parcel.status === "delivered"
-                            ? "Already delivered!"
-                            : "Payment"
-                        }
-                      />
-                    </Link>
+                    {parcel.payment_status !== "delivered" && (
+                      <Link to={`payment/${parcel._id}`}>
+                        <FaCcAmazonPay
+                          className="text-lime-500 text-xl"
+                          title={
+                            parcel.payment_status === "delivered"
+                              ? "Already delivered!"
+                              : "Payment"
+                          }
+                        />
+                      </Link>
+                    )}
                     <button
-                      disabled={parcel.status === "delivered"}
-                      onClick={() => handleDelete(parcel._id, parcel.status)}
+                      disabled={parcel.payment_status === "delivered"}
+                      onClick={() =>
+                        handleDelete(parcel._id, parcel.payment_status)
+                      }
                       className={`p-2 rounded-full ${
-                        parcel.status === "delivered"
+                        parcel.payment_status === "delivered"
                           ? "cursor-not-allowed"
                           : "hover:bg-base-300 cursor-pointer"
                       }`}
                       title={
-                        parcel.status === "delivered"
-                          ? "Delivered parcels cannot be deleted"
+                        parcel.payment_status === "delivered"
+                          ? "Already delivered!"
                           : "Delete parcel"
                       }
                     >
                       <RiDeleteBin5Fill
                         className={`text-lg ${
-                          parcel.status === "delivered"
+                          parcel.payment_status === "delivered"
                             ? "text-gray-300"
                             : "text-red-500"
                         }`}

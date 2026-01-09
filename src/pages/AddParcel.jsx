@@ -74,7 +74,7 @@ const AddParcel = () => {
         htmlContainer: "text-left",
       },
     }).then((result) => {
-      console.log(result)
+      console.log(result);
       if (result.isConfirmed) {
         confirmBooking(data, cost);
       }
@@ -91,8 +91,8 @@ const AddParcel = () => {
         ...data,
         parcelType,
         cost,
-        status: "pending",
-        createdAt: new Date(),
+        payment_status: "pending",
+        createdAt: new Date().toISOString(),
       });
 
       MySwal.fire({
@@ -311,7 +311,9 @@ const AddParcel = () => {
 
         <button
           type="submit"
-          className={`bg-lime-500 text-black cursor-pointer hover:text-white font-semibold px-6 py-2 rounded hover:bg-lime-600 transition ${loading && 'w-66'}`}
+          className={`bg-lime-500 text-black cursor-pointer hover:text-white font-semibold px-6 py-2 rounded hover:bg-lime-600 transition ${
+            loading && "w-66"
+          }`}
         >
           {loading ? <Loader /> : "Proceed to Confirm Booking"}
         </button>

@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../authentication/AuthContext";
 import Swal from "sweetalert2";
 import { PiEyeBold, PiEyeClosedBold } from "react-icons/pi";
+import Loader from "../components/Shared/Loader";
 
 const LogIn = () => {
   const [showPasswordRules, setShowPasswordRules] = useState(false);
@@ -13,6 +14,7 @@ const LogIn = () => {
   const { signInUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
 
   // The page the user wanted to visit before login
   const from = location.state?.from?.pathname || "/";
@@ -22,7 +24,6 @@ const LogIn = () => {
     handleSubmit,
     control,
     formState: { errors },
-    reset,
   } = useForm({ mode: "onChange" });
 
   const emailValue = useWatch({ control, name: "email", defaultValue: "" });
@@ -51,6 +52,7 @@ const LogIn = () => {
 
   // Form submit
   const onSubmit = (data) => {
+    setLoading(true);
     signInUser(data.email, data.password)
       .then(() => {
         Swal.fire({
@@ -60,6 +62,7 @@ const LogIn = () => {
           showConfirmButton: false,
           timer: 1500,
         }).then(() => {
+          setLoading(false);
           navigate(from, { replace: true });
         });
       })
@@ -78,6 +81,7 @@ const LogIn = () => {
           title: "Oops...",
           text: message,
         });
+        setLoading(false);
       });
   };
 
@@ -201,7 +205,7 @@ const LogIn = () => {
             type="submit"
             className="btn bg-lime-400 hover:bg-lime-500 hover:text-white mt-4 text-xl"
           >
-            Login
+            {loading ? <Loader /> : "Login"}
           </button>
         </form>
 

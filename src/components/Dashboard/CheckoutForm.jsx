@@ -1,40 +1,21 @@
-import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
-import { useState } from "react";
-import Swal from "sweetalert2";
+import {
+  Elements,
+  PaymentElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import Swal from "sweetalert2";
 import { api, getParcelById } from "../../utils/Api";
 import Loader from "../Shared/Loader";
+import { stripePromise } from "../../utils/stripe";
 
 const CheckoutForm = () => {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
-  const { id } = useParams();
-
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["parcel", id],
-    queryFn: () => getParcelById(id),
-    enabled: !!id,
-  });
-
-  if (isLoading) {
-    return (
-      <div className="text-center mt-20 min-h-screen">
-        <span className="loading loading-bars loading-xl text-lime-400"></span>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return <p className="text-red-500">{error.message}</p>;
-  }
-
-  if (!data?.data) {
-    return <p className="text-red-500">Parcel not found</p>;
-  }
-
-  const parcel = data.data;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,67 +23,93 @@ const CheckoutForm = () => {
 
     setLoading(true);
 
-    try {
-      // 1️⃣ Create payment intent
-      const res = await api.post("/create-payment-intent", {
-        amount: parcel.cost,
-        parcelId: parcel._id,
-      });
+    const { error, paymentIntent } = await stripe.confirmPayment({
+      elements,
+      redirect: "if_required",
+    });
 
-      const clientSecret = res.data.clientSecret;
-
-      // 2️⃣ Confirm card payment
-      const result = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: elements.getElement(CardElement),
-        },
-      });
-
-      if (result.error) {
-        Swal.fire({
-          icon: "error",
-          title: "Payment Failed",
-          text: result.error.message,
-        });
-        return;
-      }
-
-      // 3️⃣ Success
-      if (result.paymentIntent.status === "succeeded") {
-        Swal.fire({
-          icon: "success",
-          title: "Payment Successful 🎉",
-          text: `Transaction ID: ${result.paymentIntent.id}`,
-        });
-      }
-    } catch (err) {
-      Swal.fire({
-        icon: "error",
-        title: "Something went wrong",
-        text: err.message,
-      });
-    } finally {
-      setLoading(false);
+    if (error) {
+      Swal.fire("Payment Failed", error.message, "error");
+    } else if (paymentIntent.status === "succeeded") {
+      Swal.fire(
+        "Payment Successful 🎉",
+        `Transaction ID: ${paymentIntent.id}`,
+        "success"
+      );
     }
+
+    setLoading(false);
   };
 
   return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <PaymentElement />
+      <button
+        disabled={!stripe || loading}
+        className="btn w-full bg-lime-500 text-white"
+      >
+        {loading ? <Loader /> : "Pay Now"}
+      </button>
+    </form>
+  );
+};
+
+const Checkout = () => {
+  const { id } = useParams();
+  const [clientSecret, setClientSecret] = useState(null);
+
+  // Get parcel
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["parcel", id],
+    queryFn: () => getParcelById(id),
+    enabled: !!id,
+  });
+
+  // Create PaymentIntent
+  useEffect(() => {
+    if (!data?.data) return;
+
+    api
+      .post("/create-payment-intent", {
+        parcelId: data.data._id,
+        customerName: data.data.senderName,
+        customerEmail: data.data.senderEmail,
+      })
+      .then((res) => {
+        setClientSecret(res.data.clientSecret);
+      });
+  }, [data]);
+
+  if (isLoading || !clientSecret)
+    return (
+      <div className="flex justify-center items-center">
+        <span className="loading loading-bars loading-xl text-lime-400"></span>
+      </div>
+    );
+  if (isError) return <p className="text-red-500">{error.message}</p>;
+
+  return (
     <div className="max-w-md mx-auto bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold mb-4 text-center">Pay ৳{parcel.cost}</h2>
+      <h2 className="text-xl font-bold mb-4 text-center">
+        Pay ৳{data.data.cost}
+      </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <CardElement className="p-4 border rounded" />
-
-        <button
-          type="submit"
-          disabled={!stripe || loading}
-          className="btn w-full bg-lime-500 hover:bg-lime-600 text-white"
-        >
-          {loading ? <Loader /> : `Pay ৳${parcel.cost}`}
-        </button>
-      </form>
+      <Elements
+        stripe={stripePromise}
+        options={{
+          clientSecret,
+          defaultValues: {
+            billingDetails: {
+              name: data.data.senderName,
+              email: data.data.senderEmail,
+            },
+          },
+        }}
+      >
+        <CheckoutForm />
+      </Elements>
     </div>
   );
 };
 
-export default CheckoutForm;
+export default Checkout;

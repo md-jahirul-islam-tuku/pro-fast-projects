@@ -48,7 +48,7 @@ const router = createBrowserRouter([
           },
           { path: "profile", Component: MyProfile },
           { path: "settings", Component: Settings },
-          { path: "payment/:id", Component: CheckoutForm },
+          { path: "parcels/payment/:id", Component: CheckoutForm },
         ],
       },
       { path: "about", Component: AboutUs },
