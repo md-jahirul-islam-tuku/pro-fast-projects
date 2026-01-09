@@ -17,6 +17,7 @@ import BeARider from "../pages/BeARider";
 import CheckoutForm from "../components/Dashboard/CheckoutForm";
 import Payments from "../components/Dashboard/Payments";
 import TrackPackage from "../components/Dashboard/TrackPackage";
+import Services from "../pages/Services";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, Component: Home },
+      { path: "services", Component: Services },
       { path: "coverage", Component: BangladeshCoverage },
       { path: "be-rider", Component: BeARider },
       {

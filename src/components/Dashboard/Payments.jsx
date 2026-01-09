@@ -16,7 +16,12 @@ const Payments = () => {
     },
   });
 
-  if (isLoading) return <Loader />;
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center">
+        <span className="loading loading-bars loading-xl text-lime-400"></span>
+      </div>
+    );
   if (isError) return <p className="text-red-500">{error.message}</p>;
 
   if (!data?.length) {
