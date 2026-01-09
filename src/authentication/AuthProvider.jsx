@@ -32,7 +32,7 @@ const AuthProvider = ({ children }) => {
       // Update profile immediately
       await updateProfile(userCredential.user, {
         displayName,
-        photoURL: photoURL || "",
+        photoURL,
       });
 
       setUser({ ...userCredential.user, displayName, photoURL });

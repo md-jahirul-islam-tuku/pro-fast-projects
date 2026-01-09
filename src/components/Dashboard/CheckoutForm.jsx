@@ -5,7 +5,7 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import { api, getParcelById } from "../../utils/Api";
@@ -13,9 +13,17 @@ import Loader from "../Shared/Loader";
 import { stripePromise } from "../../utils/stripe";
 
 const CheckoutForm = () => {
+  const { id } = useParams();
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
+  // Get parcel
+  const { data } = useQuery({
+    queryKey: ["parcel", id],
+    queryFn: () => getParcelById(id),
+    enabled: !!id,
+  });
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,11 +39,21 @@ const CheckoutForm = () => {
     if (error) {
       Swal.fire("Payment Failed", error.message, "error");
     } else if (paymentIntent.status === "succeeded") {
+      await api.post("/payments", {
+        parcelId: id,
+        paymentIntentId: paymentIntent.id,
+        amount: paymentIntent.amount / 100,
+        customerName: data.data.senderName,
+        customerEmail: data.data.senderEmail,
+      });
       Swal.fire(
         "Payment Successful 🎉",
         `Transaction ID: ${paymentIntent.id}`,
         "success"
-      );
+      ).then(() => {
+        // ✅ Navigate after user clicks OK
+        navigate("/dashboard/parcels");
+      });
     }
 
     setLoading(false);
@@ -48,7 +66,7 @@ const CheckoutForm = () => {
         disabled={!stripe || loading}
         className="btn w-full bg-lime-500 text-white"
       >
-        {loading ? <Loader /> : "Pay Now"}
+        {loading ? <Loader /> : `Pay Now $${data?.data?.cost}`}
       </button>
     </form>
   );
@@ -91,7 +109,7 @@ const Checkout = () => {
   return (
     <div className="max-w-md mx-auto bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold mb-4 text-center">
-        Pay ৳{data.data.cost}
+        Pay: ${data.data.cost}
       </h2>
 
       <Elements

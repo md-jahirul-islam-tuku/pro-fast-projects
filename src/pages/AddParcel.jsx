@@ -91,7 +91,8 @@ const AddParcel = () => {
         ...data,
         parcelType,
         cost,
-        payment_status: "pending",
+        status: "Pending",
+        paymentStatus: "unpaid",
         createdAt: new Date().toISOString(),
       });
 

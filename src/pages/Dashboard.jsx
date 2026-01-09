@@ -1,7 +1,16 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import { useAuth } from "../authentication/AuthContext";
+import {
+  FaBoxOpen,
+  FaMoneyCheckAlt,
+  FaSearchLocation,
+  FaUser,
+  FaCog,
+} from "react-icons/fa";
 
 const Dashboard = () => {
+  const { user } = useAuth();
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
@@ -47,29 +56,68 @@ const Dashboard = () => {
             <NavLink
               to="parcels"
               className={({ isActive }) =>
-                isActive ? "bg-lime-400 text-white" : ""
+                `flex items-center gap-3 ${
+                  isActive ? "bg-lime-400 text-white" : ""
+                }`
               }
             >
+              <FaBoxOpen className="text-xl" />
               Parcels
             </NavLink>
           </li>
+
+          <li>
+            <NavLink
+              to={`payments/${user?.email}`}
+              className={({ isActive }) =>
+                `flex items-center gap-3 ${
+                  isActive ? "bg-lime-400 text-white" : ""
+                }`
+              }
+            >
+              <FaMoneyCheckAlt className="text-xl" />
+              Payments
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink
+              to="trackPackage"
+              className={({ isActive }) =>
+                `flex items-center gap-3 ${
+                  isActive ? "bg-lime-400 text-white" : ""
+                }`
+              }
+            >
+              <FaSearchLocation className="text-xl" />
+              Track Package
+            </NavLink>
+          </li>
+
           <li>
             <NavLink
               to="profile"
               className={({ isActive }) =>
-                isActive ? "bg-lime-400 text-white" : ""
+                `flex items-center gap-3 ${
+                  isActive ? "bg-lime-400 text-white" : ""
+                }`
               }
             >
+              <FaUser className="text-xl" />
               Profile
             </NavLink>
           </li>
+
           <li>
             <NavLink
               to="settings"
               className={({ isActive }) =>
-                isActive ? "bg-lime-400 text-white" : ""
+                `flex items-center gap-3 ${
+                  isActive ? "bg-lime-400 text-white" : ""
+                }`
               }
             >
+              <FaCog className="text-xl" />
               Settings
             </NavLink>
           </li>

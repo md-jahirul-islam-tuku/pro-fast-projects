@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useAuth } from "../authentication/AuthContext";
 import Swal from "sweetalert2";
 import { PiEyeBold, PiEyeClosedBold } from "react-icons/pi";
 import Loader from "../components/Shared/Loader";
+import { FaUserCircle } from "react-icons/fa";
+import axios from "axios";
 
 const Register = () => {
   const [showPasswordRules, setShowPasswordRules] = useState(false);
@@ -13,6 +15,48 @@ const Register = () => {
 
   const { registerUser } = useAuth();
   const [loading, setLoading] = useState(false);
+  const fileRef = useRef(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // optional validation
+    if (file.size > 2 * 1024 * 1024) {
+      alert("Image must be under 2MB");
+      return;
+    }
+
+    setImageFile(file);
+    setPreview(URL.createObjectURL(file));
+  };
+
+  // ❌ cancel image
+  const handleCancelImage = () => {
+    setImageFile(null);
+    setPreview(null);
+
+    // reset file input
+    if (fileRef.current) {
+      fileRef.current.value = "";
+    }
+  };
+
+  const uploadImageToImgbb = async () => {
+    const formData = new FormData();
+    formData.append("image", imageFile);
+
+    const res = await axios.post(
+      `https://api.imgbb.com/1/upload?key=${
+        import.meta.env.VITE_IMGBB_API_KEY
+      }`,
+      formData
+    );
+
+    return res.data.data.url;
+  };
 
   const {
     register,
@@ -45,9 +89,14 @@ const Register = () => {
   const isPasswordValid = Object.values(rules).every(Boolean);
 
   // Submit
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    let photoURL = "";
+
+    if (imageFile) {
+      photoURL = await uploadImageToImgbb();
+    }
     setLoading(true);
-    registerUser(data.email, data.password, data.displayName)
+    registerUser(data.email, data.password, data.displayName, photoURL)
       .then(() => {
         Swal.fire({
           position: "top",
@@ -61,6 +110,7 @@ const Register = () => {
           setShowEmailRules(false);
           setShowPasswordRules(false);
           setLoading(false);
+          setPreview(null);
         });
       })
       .catch((error) => {
@@ -73,6 +123,7 @@ const Register = () => {
           title: "Oops...",
           text: message,
         });
+        setLoading(false);
       });
   };
 
@@ -83,6 +134,37 @@ const Register = () => {
         <p className="font-semibold mb-4">Register with ProFast</p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Photo */}
+          <div className="relative flex justify-start mb-6">
+            <label className="cursor-pointer relative">
+              {preview ? (
+                <div className="flex gap-3">
+                  <img
+                    src={preview}
+                    alt="preview"
+                    className="w-24 h-24 rounded-full object-cover border-4 border-lime-400"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleCancelImage}
+                    className="text-red-500 underline cursor-pointer font-semibold text-lg"
+                  >
+                    Change image
+                  </button>
+                </div>
+              ) : (
+                <FaUserCircle className="text-5xl text-gray-400 hover:text-lime-500" />
+              )}
+
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                hidden
+              />
+            </label>
+          </div>
           {/* Name */}
           <div>
             <label className="label">Name</label>

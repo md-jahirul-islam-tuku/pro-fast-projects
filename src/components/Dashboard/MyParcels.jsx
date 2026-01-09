@@ -88,7 +88,7 @@ const MyParcels = () => {
               <tr>
                 <th>Title</th>
                 <th>Type</th>
-                <th>Status</th>
+                <th>Delivery</th>
                 <th>Cost</th>
                 <th>Payment</th>
                 <th>Created</th>
@@ -100,32 +100,34 @@ const MyParcels = () => {
               {parcels.map((parcel) => (
                 <tr key={parcel._id}>
                   <td>{parcel.title}</td>
-                  <td>{parcel.parcelType}</td>
+                  <td className="capitalize">{parcel.parcelType}</td>
                   <td
                     className={`capitalize ${
-                      parcel.payment_status === "delivered"
+                      parcel.paymentStatus === "delivered"
                         ? "text-lime-600"
                         : "text-red-500"
                     }`}
                   >
-                    {parcel.payment_status}
+                    {parcel.status}
                   </td>
                   <td>৳{parcel.cost}</td>
-                  <td  className={`${
-                      parcel.payment_status === "delivered"
+                  <td
+                    className={`${
+                      parcel.paymentStatus === "paid"
                         ? "text-lime-600"
                         : "text-red-500"
-                    }`}>{`${
-                    parcel.payment_status === "delivered" ? "PAID" : "UNPAID"
+                    }`}
+                  >{`${
+                    parcel.paymentStatus === "paid" ? "PAID" : "UNPAID"
                   }`}</td>
-                  <td>{new Date(parcel.createdAt).toLocaleDateString()}</td>
+                  <td>{new Date(parcel.createdAt).toLocaleString()}</td>
                   <td className="flex items-center">
-                    {parcel.payment_status !== "delivered" && (
+                    {parcel.paymentStatus !== "paid" && (
                       <Link to={`payment/${parcel._id}`}>
                         <FaCcAmazonPay
                           className="text-lime-500 text-xl"
                           title={
-                            parcel.payment_status === "delivered"
+                            parcel.paymentStatus === "paid"
                               ? "Already delivered!"
                               : "Payment"
                           }
@@ -133,24 +135,24 @@ const MyParcels = () => {
                       </Link>
                     )}
                     <button
-                      disabled={parcel.payment_status === "delivered"}
+                      disabled={parcel.paymentStatus === "paid"}
                       onClick={() =>
                         handleDelete(parcel._id, parcel.payment_status)
                       }
                       className={`p-2 rounded-full ${
-                        parcel.payment_status === "delivered"
+                        parcel.paymentStatus === "paid"
                           ? "cursor-not-allowed"
                           : "hover:bg-base-300 cursor-pointer"
                       }`}
                       title={
-                        parcel.payment_status === "delivered"
+                        parcel.paymentStatus === "paid"
                           ? "Already delivered!"
                           : "Delete parcel"
                       }
                     >
                       <RiDeleteBin5Fill
                         className={`text-lg ${
-                          parcel.payment_status === "delivered"
+                          parcel.paymentStatus === "paid"
                             ? "text-gray-300"
                             : "text-red-500"
                         }`}

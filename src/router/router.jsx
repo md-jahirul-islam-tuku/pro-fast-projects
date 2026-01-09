@@ -15,6 +15,8 @@ import MyProfile from "../components/Dashboard/MyProfile";
 import Settings from "../components/Dashboard/Settings";
 import BeARider from "../pages/BeARider";
 import CheckoutForm from "../components/Dashboard/CheckoutForm";
+import Payments from "../components/Dashboard/Payments";
+import TrackPackage from "../components/Dashboard/TrackPackage";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +49,8 @@ const router = createBrowserRouter([
             Component: MyParcels,
           },
           { path: "profile", Component: MyProfile },
+          { path: "payments/:email", Component: Payments },
+          { path: "trackPackage", Component: TrackPackage },
           { path: "settings", Component: Settings },
           { path: "parcels/payment/:id", Component: CheckoutForm },
         ],
