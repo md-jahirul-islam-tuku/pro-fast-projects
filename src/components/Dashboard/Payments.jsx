@@ -11,7 +11,6 @@ const Payments = () => {
     enabled: !!user?.email,
     queryFn: async () => {
       const res = await api.get(`/payments/${user.email}`);
-      console.log(res);
       return res.data || [];
     },
   });

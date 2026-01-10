@@ -1,23 +1,30 @@
-import React from "react";
 import { Outlet } from "react-router-dom";
 import image from "../assets/authImage.png";
 import Logo from "../components/Shared/Logo";
 
 const AuthLayout = () => {
   return (
-    <div className="webWidth">
-      <div className="">
-        <div className="flex items-center flex-col-reverse lg:flex-row-reverse">
-          <div className="flex-1 py-20 lg:pt-52 bg-lime-50 lg:min-h-screen">
-            <img className="h-full" src={image} alt="" />
-          </div>
-          <div className="flex-1 bg-base-100 lg:min-h-screen lg:p-10 p-5">
-            <Logo />
-            <div className="flex items-center p-16 lg:p-18">
-              <Outlet />
-            </div>
+    <div className="min-h-screen webWidth">
+      <div className="flex min-h-screen flex-col-reverse lg:flex-row-reverse">
+        
+        {/* LEFT SIDE (Image) */}
+        <div className="flex-1 bg-lime-50 flex items-center justify-center">
+          <img
+            src={image}
+            alt="Auth Visual"
+            className="max-h-[80vh] object-contain"
+          />
+        </div>
+
+        {/* RIGHT SIDE (Form Area) */}
+        <div className="flex-1 bg-base-100 flex flex-col p-6 lg:p-10">
+          <Logo />
+
+          <div className="flex flex-1 items-center justify-center">
+            <Outlet />
           </div>
         </div>
+
       </div>
     </div>
   );

@@ -123,7 +123,7 @@ const Navbar = () => {
                     <img
                       className="border-2 rounded-full border-lime-500"
                       alt="Tailwind CSS Navbar component"
-                      src={user.photoURL}
+                      src={user?.photo || user?.photoURL}
                     />
                   </div>
                 </div>
