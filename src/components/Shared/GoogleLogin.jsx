@@ -14,11 +14,12 @@ const GoogleLogin = () => {
     try {
       const result = await googleLogin();
       const user = result.user;
-      await api.post("/users", {
-        name: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL,
-      });
+      console.log(user);
+      // await api.post("/users", {
+      //   name: user.displayName,
+      //   email: user.email,
+      //   photoURL: user.photoURL,
+      // });
       Swal.fire({
         position: "top",
         icon: "success",

@@ -18,6 +18,7 @@ import CheckoutForm from "../components/Dashboard/CheckoutForm";
 import Payments from "../components/Dashboard/Payments";
 import TrackPackage from "../components/Dashboard/TrackPackage";
 import Services from "../pages/Services";
+import PendingRiders from "../components/Dashboard/PendingRiders";
 
 const router = createBrowserRouter([
   {
@@ -28,7 +29,14 @@ const router = createBrowserRouter([
       { index: true, Component: Home },
       { path: "services", Component: Services },
       { path: "coverage", Component: BangladeshCoverage },
-      { path: "be-rider", Component: BeARider },
+      {
+        path: "be-rider",
+        element: (
+          <PrivateRoute>
+            <BeARider />
+          </PrivateRoute>
+        ),
+      },
       {
         path: "sendParcel",
         element: (
@@ -52,6 +60,7 @@ const router = createBrowserRouter([
           },
           { path: "profile", Component: MyProfile },
           { path: "payments/:email", Component: Payments },
+          { path: "pendingRiders", Component: PendingRiders },
           { path: "trackPackage", Component: TrackPackage },
           { path: "settings", Component: Settings },
           { path: "parcels/payment/:id", Component: CheckoutForm },

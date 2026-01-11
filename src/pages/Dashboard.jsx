@@ -8,6 +8,7 @@ import {
   FaUser,
   FaCog,
 } from "react-icons/fa";
+import { SiRider } from "react-icons/si";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -80,6 +81,19 @@ const Dashboard = () => {
             </NavLink>
           </li>
 
+          <li>
+            <NavLink
+              to="pendingRiders"
+              className={({ isActive }) =>
+                `flex items-center gap-3 ${
+                  isActive ? "bg-lime-400 text-white" : ""
+                }`
+              }
+            >
+              <SiRider className="text-xl" />
+              Pending riders
+            </NavLink>
+          </li>
           <li>
             <NavLink
               to="trackPackage"
