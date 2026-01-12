@@ -24,13 +24,12 @@ const Payments = () => {
   if (isError) return <p className="text-red-500">{error.message}</p>;
 
   if (!data?.length) {
-    return <p className="text-center text-gray-500">No payments found</p>;
+    return <p className="text-red-500">No payments found</p>;
   }
 
   return (
-    <div className="p-4">
+    <div className="bg-white p-6 rounded shadow min-h-screen">
       <h2 className="text-xl font-bold mb-4">My Payments</h2>
-
       <div className="overflow-x-auto">
         <table className="table w-full">
           <thead>

@@ -19,3 +19,11 @@ export const getParcelById = async (id) => {
   const res = await api.get(`/parcel/${id}`);
   return res.data;
 };
+
+// Get user by email
+export const getUserByEmail = async (email) => {
+  if (!email) return null;
+
+  const res = await api.get(`/users/${email}`);
+  return res.data.data; // IMPORTANT: always return something
+};

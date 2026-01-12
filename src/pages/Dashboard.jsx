@@ -1,17 +1,17 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../authentication/AuthContext";
-import {
-  FaBoxOpen,
-  FaMoneyCheckAlt,
-  FaSearchLocation,
-  FaUser,
-  FaCog,
-} from "react-icons/fa";
-import { SiRider } from "react-icons/si";
+import { useQuery } from "@tanstack/react-query";
+import { getUserByEmail } from "../utils/Api";
 
 const Dashboard = () => {
   const { user } = useAuth();
+
+  const { data: dbUser } = useQuery({
+    queryKey: ["user", user?.email],
+    enabled: !!user?.email,
+    queryFn: () => getUserByEmail(user.email),
+  });
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
@@ -62,51 +62,81 @@ const Dashboard = () => {
                 }`
               }
             >
-              <FaBoxOpen className="text-xl" />
-              Parcels
+              📦 Parcels
             </NavLink>
           </li>
 
-          <li>
-            <NavLink
-              to={`payments/${user?.email}`}
-              className={({ isActive }) =>
-                `flex items-center gap-3 ${
-                  isActive ? "bg-lime-400 text-white" : ""
-                }`
-              }
-            >
-              <FaMoneyCheckAlt className="text-xl" />
-              Payments
-            </NavLink>
-          </li>
+          {dbUser?.role === "admin" && (
+            <li>
+              <NavLink
+                to={`payments/${user?.email}`}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 ${
+                    isActive ? "bg-lime-400 text-white" : ""
+                  }`
+                }
+              >
+                💳 Payments
+              </NavLink>
+            </li>
+          )}
 
-          <li>
-            <NavLink
-              to="pendingRiders"
-              className={({ isActive }) =>
-                `flex items-center gap-3 ${
-                  isActive ? "bg-lime-400 text-white" : ""
-                }`
-              }
-            >
-              <SiRider className="text-xl" />
-              Pending riders
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="trackPackage"
-              className={({ isActive }) =>
-                `flex items-center gap-3 ${
-                  isActive ? "bg-lime-400 text-white" : ""
-                }`
-              }
-            >
-              <FaSearchLocation className="text-xl" />
-              Track Package
-            </NavLink>
-          </li>
+          {dbUser?.role === "admin" && (
+            <li>
+              <NavLink
+                to="pendingRiders"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 ${
+                    isActive ? "bg-lime-400 text-white" : ""
+                  }`
+                }
+              >
+                🕒 Pending riders
+              </NavLink>
+            </li>
+          )}
+          {dbUser?.role === "admin" && (
+            <li>
+              <NavLink
+                to="activeRiders"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 ${
+                    isActive ? "bg-lime-400 text-white" : ""
+                  }`
+                }
+              >
+                ✅ Active riders
+              </NavLink>
+            </li>
+          )}
+          {dbUser?.role === "admin" && (
+            <li>
+              <NavLink
+                to="manageUsers"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 ${
+                    isActive ? "bg-lime-400 text-white" : ""
+                  }`
+                }
+              >
+                🧑‍🤝‍🧑 Manage users
+              </NavLink>
+            </li>
+          )}
+          {dbUser?.role === "admin" && (
+            <li>
+              <NavLink
+                to="trackPackage"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 ${
+                    isActive ? "bg-lime-400 text-white" : ""
+                  }`
+                }
+              >
+                📍 Track Package
+              </NavLink>
+            </li>
+          )}
 
           <li>
             <NavLink
@@ -117,8 +147,7 @@ const Dashboard = () => {
                 }`
               }
             >
-              <FaUser className="text-xl" />
-              Profile
+              👤 Profile
             </NavLink>
           </li>
 
@@ -131,8 +160,7 @@ const Dashboard = () => {
                 }`
               }
             >
-              <FaCog className="text-xl" />
-              Settings
+              ⚙️ Settings
             </NavLink>
           </li>
         </ul>

@@ -19,6 +19,9 @@ import Payments from "../components/Dashboard/Payments";
 import TrackPackage from "../components/Dashboard/TrackPackage";
 import Services from "../pages/Services";
 import PendingRiders from "../components/Dashboard/PendingRiders";
+import ApprovedRiders from "../components/Dashboard/ApprovedRiders";
+import ManageUsers from "../components/Dashboard/ManageUsers";
+import AdminRoute from "../routes/AdminRoute";
 
 const router = createBrowserRouter([
   {
@@ -59,9 +62,46 @@ const router = createBrowserRouter([
             Component: MyParcels,
           },
           { path: "profile", Component: MyProfile },
-          { path: "payments/:email", Component: Payments },
-          { path: "pendingRiders", Component: PendingRiders },
-          { path: "trackPackage", Component: TrackPackage },
+          {
+            path: "payments/:email",
+            element: (
+              <AdminRoute>
+                <Payments />
+              </AdminRoute>
+            ),
+          },
+          {
+            path: "pendingRiders",
+            element: (
+              <AdminRoute>
+                <PendingRiders />
+              </AdminRoute>
+            ),
+          },
+          {
+            path: "activeRiders",
+            element: (
+              <AdminRoute>
+                <ApprovedRiders />
+              </AdminRoute>
+            ),
+          },
+          {
+            path: "manageUsers",
+            element: (
+              <AdminRoute>
+                <ManageUsers />
+              </AdminRoute>
+            ),
+          },
+          {
+            path: "trackPackage",
+            element: (
+              <AdminRoute>
+                <TrackPackage />
+              </AdminRoute>
+            ),
+          },
           { path: "settings", Component: Settings },
           { path: "parcels/payment/:id", Component: CheckoutForm },
         ],
