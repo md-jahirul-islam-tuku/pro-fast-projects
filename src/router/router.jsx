@@ -64,11 +64,7 @@ const router = createBrowserRouter([
           { path: "profile", Component: MyProfile },
           {
             path: "payments/:email",
-            element: (
-              <AdminRoute>
-                <Payments />
-              </AdminRoute>
-            ),
+            Component: Payments,
           },
           {
             path: "pendingRiders",

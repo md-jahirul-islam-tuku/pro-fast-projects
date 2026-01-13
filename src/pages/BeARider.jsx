@@ -2,15 +2,23 @@ import { useForm } from "react-hook-form";
 import riderImg from "../../src/assets/agent-pending.png"; // update path if needed
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { api } from "../utils/Api";
+import { api, getUserByEmail } from "../utils/Api";
 import Swal from "sweetalert2";
 import Loader from "../components/Shared/Loader";
 import { useAuth } from "../authentication/AuthContext";
+import { useQuery } from "@tanstack/react-query";
 
 const BeARider = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+
+  const { data: dbUser } = useQuery({
+    queryKey: ["user", "rider", user?.email],
+    enabled: !!user?.email,
+    queryFn: () => getUserByEmail(user.email),
+  });
+  const role = dbUser?.role;
 
   const {
     register,
@@ -210,8 +218,8 @@ const BeARider = () => {
             {/* Submit */}
             <button
               type="submit"
-              disabled={submitting}
-              className="btn w-full bg-lime-400 hover:bg-lime-500 text-black font-semibold"
+              disabled={submitting || role === "rider"}
+              className="btn w-full btn-primary text-black font-semibold"
             >
               {submitting ? <Loader /> : "Submit"}
             </button>

@@ -66,20 +66,18 @@ const Dashboard = () => {
             </NavLink>
           </li>
 
-          {dbUser?.role === "admin" && (
-            <li>
-              <NavLink
-                to={`payments/${user?.email}`}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 ${
-                    isActive ? "bg-lime-400 text-white" : ""
-                  }`
-                }
-              >
-                💳 Payments
-              </NavLink>
-            </li>
-          )}
+          <li>
+            <NavLink
+              to={`payments/${user?.email}`}
+              className={({ isActive }) =>
+                `flex items-center gap-3 ${
+                  isActive ? "bg-lime-400 text-white" : ""
+                }`
+              }
+            >
+              💳 Payments
+            </NavLink>
+          </li>
 
           {dbUser?.role === "admin" && (
             <li>

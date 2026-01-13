@@ -69,7 +69,7 @@ const PendingRiders = () => {
   }
 
   return (
-    <div className="bg-white p-6 rounded shadow min-h-screen">
+    <div className="bg-white p-6 rounded shadow">
       <h2 className="text-2xl font-bold mb-4">Pending Riders</h2>
 
       <div className="overflow-x-auto">

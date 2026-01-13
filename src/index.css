@@ -1,3 +1,8 @@
+:root {
+  --color-primary: rgb(163,230,53);
+  --color-primary-content: rgb(236,252,203);
+}
+
 @import "tailwindcss";
 @plugin "daisyui" {
   themes: light --default;

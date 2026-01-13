@@ -78,36 +78,51 @@ const ManageUsers = () => {
             className="input input-bordered border-lime-500 w-full mb-4"
           />
 
-          <ul className="border border-lime-500 rounded bg-base-100 min-h-screen overflow-y-auto">
-            {displayedUsers.map((user) => (
-              <li
-                key={user._id}
-                onClick={() => setSelectedUser(user)}
-                className="flex justify-between items-center px-4 py-2 cursor-pointer hover:bg-lime-100"
-              >
-                <span className="font-bold">{user.name}</span>
-                <span className="text-start">{user.email}</span>
+          <div className="rounded bg-base-100 overflow-x-auto">
+            <table className="table w-full">
+              <thead className="bg-primary-content font-bold">
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th className="text-center">Role</th>
+                </tr>
+              </thead>
 
-                <span
-                  className={`badge capitalize font-bold ${
-                    user.role === "admin"
-                      ? "bg-lime-500"
-                      : `badge-outline ${
-                          user.role === "user"
-                            ? " border-lime-500 text-lime-600"
+              <tbody>
+                {displayedUsers.map((user) => (
+                  <tr
+                    key={user._id}
+                    onClick={() => setSelectedUser(user)}
+                    className="cursor-pointer hover:bg-lime-100 border-b border-primary"
+                  >
+                    <td className="font-semibold">{user.name}</td>
+                    <td>{user.email}</td>
+                    <td className="text-center">
+                      <span
+                        className={`badge capitalize font-bold text-black ${
+                          user.role === "admin"
+                            ? "badge-primary"
+                            : user.role === "user"
+                            ? "badge-outline border-primary"
                             : "badge-info"
-                        }`
-                  }`}
-                >
-                  {user.role}
-                </span>
-              </li>
-            ))}
+                        }`}
+                      >
+                        {user.role}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
 
-            {displayedUsers.length === 0 && (
-              <li className="text-center py-4 text-gray-500">No users found</li>
-            )}
-          </ul>
+                {displayedUsers.length === 0 && (
+                  <tr>
+                    <td colSpan={3} className="text-center py-4 text-gray-500">
+                      No users found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
 
@@ -140,7 +155,7 @@ const ManageUsers = () => {
           {selectedUser.role !== "admin" && (
             <button
               onClick={() => updateRole("admin")}
-              className="btn bg-lime-500 text-white w-full"
+              className="btn btn-primary text-black w-full"
             >
               Make Admin
             </button>
@@ -157,7 +172,7 @@ const ManageUsers = () => {
 
           <button
             onClick={() => setSelectedUser(null)}
-            className="btn btn-outline w-full"
+            className="btn btn-outline btn-primary text-black w-full"
           >
             Back to Search
           </button>

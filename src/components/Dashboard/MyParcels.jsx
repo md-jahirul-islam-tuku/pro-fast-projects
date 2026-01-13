@@ -76,7 +76,7 @@ const MyParcels = () => {
   }
 
   return (
-    <div className="bg-white p-6 rounded shadow min-h-screen">
+    <div className="bg-white p-6 rounded shadow">
       <h2 className="text-2xl font-bold mb-4">My Parcels</h2>
 
       {parcels.length === 0 ? (

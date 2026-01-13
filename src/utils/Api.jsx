@@ -6,6 +6,7 @@ export const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+// for verifyFirebaseToken
 api.interceptors.request.use(async (config) => {
   const user = getAuth().currentUser;
   if (user) {
